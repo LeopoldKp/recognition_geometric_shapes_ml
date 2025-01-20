@@ -9,4 +9,6 @@ dataset - data
 результать на не знакомых данных
 
 ![image](https://github.com/user-attachments/assets/02c9b767-9c87-4883-9687-d61698b17521)
+![image](https://github.com/user-attachments/assets/51c8f2c4-b8f5-41a1-9147-992c209f1e9b)
+
 

@@ -4,8 +4,6 @@ import math
 import os
 import json
 
-num_images = 1000
-
 def rotate_point(point, angle, center):
     """Поворачивает точку вокруг центра на заданный угол."""
     angle_rad = math.radians(angle)
@@ -54,6 +52,7 @@ def draw_shapes(image_size, file_index):
 
     shapes_data = {}
     bounding_boxes = []
+    padding = 4  # Отступ вокруг фигуры
 
     # Генерация квадратов
     while True:
@@ -71,7 +70,12 @@ def draw_shapes(image_size, file_index):
         )
 
         if all(not shapes_overlap(square_bbox, bbox) for bbox in bounding_boxes):
-            shapes_data['square'] = square_coords
+            shapes_data['square'] = {
+                "top_left": (square_bbox[0] - padding, square_bbox[1] - padding),
+                "top_right": (square_bbox[2] + padding, square_bbox[1] - padding),
+                "bottom_right": (square_bbox[2] + padding, square_bbox[3] + padding),
+                "bottom_left": (square_bbox[0] - padding, square_bbox[3] + padding)
+            }
             bounding_boxes.append(square_bbox)
             draw.polygon(square_coords, outline="black")
             break
@@ -86,7 +90,12 @@ def draw_shapes(image_size, file_index):
         )
 
         if all(not shapes_overlap(circle_bbox, bbox) for bbox in bounding_boxes):
-            shapes_data['circle'] = circle_bbox
+            shapes_data['circle'] = {
+                "top_left": (circle_bbox[0] - padding, circle_bbox[1] - padding),
+                "top_right": (circle_bbox[2] + padding, circle_bbox[1] - padding),
+                "bottom_right": (circle_bbox[2] + padding, circle_bbox[3] + padding),
+                "bottom_left": (circle_bbox[0] - padding, circle_bbox[3] + padding)
+            }
             bounding_boxes.append(circle_bbox)
             draw.ellipse(circle_bbox, outline="black")
             break
@@ -108,7 +117,12 @@ def draw_shapes(image_size, file_index):
         )
 
         if all(not shapes_overlap(triangle_bbox, bbox) for bbox in bounding_boxes):
-            shapes_data['triangle'] = triangle_coords
+            shapes_data['triangle'] = {
+                "top_left": (triangle_bbox[0] - padding, triangle_bbox[1] - padding),
+                "top_right": (triangle_bbox[2] + padding, triangle_bbox[1] - padding),
+                "bottom_right": (triangle_bbox[2] + padding, triangle_bbox[3] + padding),
+                "bottom_left": (triangle_bbox[0] - padding, triangle_bbox[3] + padding)
+            }
             bounding_boxes.append(triangle_bbox)
             draw.polygon(triangle_coords, outline="black")
             break
@@ -118,7 +132,7 @@ def draw_shapes(image_size, file_index):
     image = apply_noise_and_blur(image, effect_type)
 
     # Сохранение изображения
-    output_dir = "dataset"
+    output_dir = "dataset/train"
     os.makedirs(output_dir, exist_ok=True)
     img_path = os.path.join(output_dir, f"{file_index}.png")
     image.save(img_path)
@@ -126,17 +140,14 @@ def draw_shapes(image_size, file_index):
     # Генерация изображения с обведенными фигурами
     annotated_image = image.copy()
     annotated_draw = ImageDraw.Draw(annotated_image)
-    for shape, coords in shapes_data.items():
-        if shape == 'circle':
-            annotated_draw.rectangle(coords, outline="red", width=2)
-        else:
-            x_coords = [c[0] for c in coords]
-            y_coords = [c[1] for c in coords]
-            bounding_box = [
-                (min(x_coords), min(y_coords)),
-                (max(x_coords), max(y_coords))
-            ]
-            annotated_draw.rectangle(bounding_box, outline="red", width=2)
+    for shape, data in shapes_data.items():
+        bounding_box = [
+            data['top_left'],
+            data['top_right'],
+            data['bottom_right'],
+            data['bottom_left']
+        ]
+        annotated_draw.rectangle([bounding_box[0], bounding_box[2]], outline="red", width=2)
 
     # annotated_img_path = os.path.join(output_dir, f"{file_index}_map.png")
     # annotated_image.save(annotated_img_path)
@@ -147,6 +158,7 @@ def draw_shapes(image_size, file_index):
         json.dump(shapes_data, json_file, indent=4)
 
 def main():
+    num_images = 1000
     image_size = (200, 200)
     for i in range(1, num_images + 1):
         print(f"Генерация изображения {i} из {num_images}")

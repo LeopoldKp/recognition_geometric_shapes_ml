@@ -1,0 +1,56 @@
+{
+    "square": {
+        "top_left": [
+            135,
+            175
+        ],
+        "top_right": [
+            155,
+            175
+        ],
+        "bottom_right": [
+            155,
+            195
+        ],
+        "bottom_left": [
+            135,
+            195
+        ]
+    },
+    "circle": {
+        "top_left": [
+            14,
+            121
+        ],
+        "top_right": [
+            44,
+            121
+        ],
+        "bottom_right": [
+            44,
+            151
+        ],
+        "bottom_left": [
+            14,
+            151
+        ]
+    },
+    "triangle": {
+        "top_left": [
+            133,
+            143
+        ],
+        "top_right": [
+            152,
+            143
+        ],
+        "bottom_right": [
+            152,
+            162
+        ],
+        "bottom_left": [
+            133,
+            162
+        ]
+    }
+}
